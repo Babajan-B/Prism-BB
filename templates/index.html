@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prism BB — Semantic Media Search</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- ── Sidebar ────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <span>Prism BB</span>
+    </div>
+
+    <nav>
+      <button class="nav-btn active" data-page="upload">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+        </svg>
+        Upload
+      </button>
+      <button class="nav-btn" data-page="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        Search
+      </button>
+      <button class="nav-btn" data-page="gallery">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        Gallery
+      </button>
+      <button class="nav-btn" data-page="network">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="5" r="3"/>
+          <circle cx="5" cy="19" r="3"/>
+          <circle cx="19" cy="19" r="3"/>
+          <line x1="12" y1="8" x2="5" y2="16"/>
+          <line x1="12" y1="8" x2="19" y2="16"/>
+          <line x1="5" y1="16" x2="19" y2="16"/>
+        </svg>
+        Network
+      </button>
+    </nav>
+
+    <div class="stats-box">
+      <div class="stat">
+        <span class="stat-val" id="stat-images">—</span>
+        <span class="stat-label">Files</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val" id="stat-vectors">—</span>
+        <span class="stat-label">Indexed</span>
+      </div>
+    </div>
+
+    <div class="model-badge">
+      <span class="badge-dot"></span>
+      gemini-embedding-2-preview
+    </div>
+  </aside>
+
+  <!-- ── Main ───────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Upload page -->
+    <section class="page active" id="page-upload">
+      <div class="page-header">
+        <h1>Upload Media</h1>
+        <p>Images, videos, audio, PDFs and text are embedded by <strong>Gemini Multimodal Embedding</strong> — all searchable in the same space.</p>
+      </div>
+
+      <div class="drop-zone" id="drop-zone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
+          <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+        </svg>
+        <p>Drag & drop files here</p>
+        <span>or</span>
+        <label class="btn-primary" for="file-input">Choose files</label>
+        <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.m4a,.flac,.aac,.pdf,.txt,.md,.json,.csv" hidden />
+        <div class="hint">
+          <strong>Images:</strong> JPG, PNG, WEBP, GIF, BMP (max 6 per batch)<br>
+          <strong>Videos:</strong> MP4, MOV, AVI, MKV (≤128 seconds)<br>
+          <strong>Audio:</strong> MP3, WAV, OGG, M4A, FLAC, AAC (≤80 seconds)<br>
+          <strong>Documents:</strong> PDF (≤6 pages), TXT, MD, JSON, CSV
+        </div>
+      </div>
+
+      <div id="upload-queue" class="upload-queue hidden"></div>
+
+      <button class="btn-primary btn-lg" id="upload-btn" disabled>
+        Index Files
+      </button>
+
+      <div id="upload-results" class="upload-results"></div>
+    </section>
+
+    <!-- Search page -->
+    <section class="page" id="page-search">
+      <div class="page-header">
+        <h1>Search Images</h1>
+      </div>
+
+      <div class="search-tabs">
+        <button class="tab-btn active" data-tab="text-search">Text Search</button>
+        <button class="tab-btn" data-tab="image-search">Image Search</button>
+      </div>
+
+      <!-- Text search -->
+      <div class="tab-panel active" id="text-search">
+        <div class="search-bar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="text-query" placeholder="e.g. red flower in a garden, microscope slide, sunset…" />
+          <button class="btn-primary" id="text-search-btn">Search</button>
+        </div>
+        <div id="text-results" class="results-grid"></div>
+      </div>
+
+      <!-- Image search -->
+      <div class="tab-panel" id="image-search">
+        <div class="img-query-zone" id="img-query-zone">
+          <img id="img-query-preview" class="hidden" alt="query" />
+          <div id="img-query-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p>Drop a query image here or click to choose</p>
+          </div>
+          <input type="file" id="img-query-input" accept=".jpg,.jpeg,.png,.webp" hidden />
+        </div>
+        <button class="btn-primary btn-lg" id="img-search-btn" disabled>Find Similar Images</button>
+        <div id="img-results" class="results-grid"></div>
+      </div>
+      
+      <!-- Search Network Visualization -->
+      <div id="search-network-container" class="search-network-container hidden">
+        <div class="search-net-header">
+          <div>
+            <h3>🔗 Relationship Network</h3>
+            <p class="search-net-desc">Visualize how search results connect to each other based on similarity</p>
+          </div>
+          <button class="btn-icon" id="search-net-fullscreen" title="Fullscreen">⛶</button>
+        </div>
+        <div id="search-network-graph" class="search-network-graph"></div>
+        <div class="search-net-legend">
+          <div class="legend-item"><span class="dot" style="background:#f05454"></span> Query (Center)</div>
+          <div class="legend-item"><span class="dot" style="background:#f5a623"></span> Top Result</div>
+          <div class="legend-item"><span class="dot" style="background:#4caf7d"></span> High Match (>70%)</div>
+          <div class="legend-item"><span class="dot" style="background:#5b6ef5"></span> Med Match (50-70%)</div>
+          <div class="legend-item"><span class="dot" style="background:#9c27b0"></span> Low Match (<50%)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery page -->
+    <section class="page" id="page-gallery">
+      <div class="page-header">
+        <h1>Gallery</h1>
+        <p id="gallery-count"></p>
+      </div>
+      <div id="gallery-grid" class="gallery-grid"></div>
+      <div id="gallery-empty" class="empty-state hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        <p>No files yet. Upload images, videos, audio, PDFs or text to get started.</p>
+      </div>
+    </section>
+
+    <!-- Network page -->
+    <section class="page" id="page-network">
+      <div class="page-header">
+        <h1>Semantic Network</h1>
+        <p>Visualize image relationships based on embeddings. <span id="network-stats"></span></p>
+        <div class="cluster-toggle">
+          <span>Group by:</span>
+          <select id="cluster-method">
+            <option value="neighbor">🔗 Best Match (Nearest Neighbor)</option>
+            <option value="high_sim">⭐ High Similarity (>75%)</option>
+            <option value="embedding_pca">🧠 Embedding Space (PCA)</option>
+            <option value="similarity_tiers">📊 Similarity Tiers (6 levels)</option>
+            <option value="dominant_theme">📝 Caption Theme (if available)</option>
+            <option value="none">⚪ No Grouping</option>
+          </select>
+        </div>
+        <div id="grouping-description" class="grouping-desc"></div>
+      </div>
+      <div id="network-container" class="network-container">
+        <div class="network-toolbar">
+          <button class="btn-icon" id="net-fullscreen" title="Fullscreen">⛶</button>
+          <button class="btn-icon" id="net-refresh" title="Refresh">↻</button>
+        </div>
+        <div id="network-graph"></div>
+      </div>
+      <div id="network-empty" class="empty-state hidden">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/>
+          <line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/><line x1="5" y1="16" x2="19" y2="16"/>
+        </svg>
+        <p id="network-empty-msg">Need at least 2 images to build a network. Upload some images first!</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── Lightbox ───────────────────────────────── -->
+  <div class="lightbox hidden" id="lightbox">
+    <div class="lightbox-backdrop" id="lb-backdrop"></div>
+    <div class="lightbox-card">
+      <button class="lb-close" id="lb-close">✕</button>
+      <img id="lb-img" src="" alt="" />
+      <div class="lb-meta">
+        <h3 id="lb-name"></h3>
+        <p id="lb-caption"></p>
+        <div class="lb-info">
+          <span id="lb-size"></span>
+          <span id="lb-date"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Toast ──────────────────────────────────── -->
+  <div class="toast hidden" id="toast"></div>
+  
+  <!-- ── Node Hover Preview ────────────────────── -->
+  <div class="node-hover-preview" id="node-hover-preview">
+    <img src="" alt="preview" />
+  </div>
+
+  <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+  <script>
+    window.libsLoaded = { three: typeof THREE !== 'undefined', forceGraph3d: false };
+  </script>
+  <script src="https://unpkg.com/3d-force-graph@1.73.0/dist/3d-force-graph.min.js" 
+          onload="window.libsLoaded.forceGraph3d = true;"
+          onerror="console.error('3D lib failed')"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
