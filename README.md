@@ -1,54 +1,72 @@
-# Prism BB
+# 🔮 Prism BB
 
-**Semantic Media Search & Visualization Platform**
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Flask-3.0+-000000?style=for-the-badge&logo=flask&logoColor=white" />
+  <img src="https://img.shields.io/badge/Google-Gemini%20Embedding-4285F4?style=for-the-badge&logo=google&logoColor=white" />
+  <img src="https://img.shields.io/badge/FAISS-Facebook%20AI-4267B2?style=for-the-badge&logo=facebook&logoColor=white" />
+</p>
 
-Prism BB is a multimodal AI-powered search engine that understands images, videos, audio, PDFs, and text in a unified embedding space. Built on Google's Gemini Embedding 2, it enables cross-modal semantic search and interactive 3D visualization of media relationships.
+<p align="center">
+  <b>Multimodal Semantic Search & 3D Visualization Platform</b>
+</p>
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
-![Flask](https://img.shields.io/badge/flask-3.0+-green.svg)
+<p align="center">
+  Search across <b>images</b>, <b>videos</b>, <b>audio</b>, <b>PDFs</b>, and <b>text</b> using natural language or media queries.
+  Built with Google's Gemini Embedding 2 for state-of-the-art multimodal AI understanding.
+</p>
 
 ---
 
 ## ✨ Features
 
-### 🔍 Multimodal Semantic Search
-- **Text-to-Media**: Search using natural language descriptions
-- **Image-to-Image**: Find visually similar content
-- **Cross-Modal**: Query any type, find any type (e.g., describe a scene in text, find matching videos)
+### 🔍 Cross-Modal Semantic Search
+| Query Type | Finds | Example |
+|------------|-------|---------|
+| **Text** → Any Media | Search with natural language | "sunset at beach" finds matching images, videos |
+| **Image** → Similar Media | Visual similarity search | Upload a photo, find similar content |
+| **Any** → Any | True multimodal search | Text query can return videos, PDFs, audio |
 
 ### 📁 Supported Media Types
-| Type | Formats | Limits |
-|------|---------|--------|
-| **Images** | JPG, PNG, WEBP, GIF, BMP | Auto-resized |
-| **Videos** | MP4, MOV, AVI, MKV, WEBM | ≤128 seconds |
-| **Audio** | MP3, WAV, OGG, M4A, FLAC, AAC | ≤80 seconds |
-| **Documents** | PDF (≤6 pages), TXT, MD, JSON, CSV | — |
 
-### 🌐 3D Semantic Network
-- Visualize relationships between media in interactive 3D space
-- Multiple clustering algorithms (PCA, similarity tiers, nearest neighbor)
-- Click nodes to view media, drag to explore connections
+| Type | Formats | Limit | Preview |
+|------|---------|-------|---------|
+| 🖼️ **Images** | JPG, PNG, WEBP, GIF, BMP | Auto-resized | Thumbnail + Lightbox |
+| 🎬 **Videos** | MP4, MOV, AVI, MKV, WEBM | ≤128 seconds | Inline player |
+| 🎵 **Audio** | MP3, WAV, OGG, M4A, FLAC, AAC | ≤80 seconds | Audio controls |
+| 📄 **Documents** | PDF (≤6 pages) | 6 pages max | PDF viewer |
+| 📝 **Text** | TXT, MD, JSON, CSV | 8192 tokens | Text preview |
 
-### 🎨 Modern Apple-Style UI
-- Clean light theme with glassmorphism effects
-- Smooth animations and transitions
-- Responsive design for all screen sizes
+### 🌐 3D Semantic Network Visualization
+- **Interactive 3D Graph**: Explore relationships between media files
+- **Clustering Algorithms**: 
+  - 🔗 Best Match (Nearest Neighbor)
+  - ⭐ High Similarity (>75%)
+  - 🧠 Embedding Space (PCA)
+  - 📊 Similarity Tiers (6 levels)
+- **Fullscreen Mode**: Immersive exploration
+- **Click to View**: Open media directly from graph nodes
+
+### 🎨 Modern UI Design
+- Clean Apple-inspired interface with glassmorphism effects
+- Light theme with smooth animations
+- Responsive layout for all screen sizes
+- Drag & drop file upload with visual feedback
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Python 3.10+
-- Gemini API key from [Google AI Studio](https://aistudio.google.com/)
+- Python 3.10 or higher
+- Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
 ### Installation
 
-#### macOS / Linux
+#### 🍎 macOS / 🐧 Linux
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/Babajan-B/Prism-BB.git
 cd Prism-BB
 
@@ -60,10 +78,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-#### Windows
+#### 🪟 Windows
 
 ```powershell
-# Clone the repository
+# Clone repository
 git clone https://github.com/Babajan-B/Prism-BB.git
 cd Prism-BB
 
@@ -75,15 +93,10 @@ venv\Scripts\activate
 pip install faiss-cpu
 
 # Install other dependencies
-pip install flask google-genai Pillow python-dotenv numpy scikit-learn
+pip install flask>=3.0.0 google-genai>=1.32.0 Pillow==10.3.0 numpy==1.26.4 python-dotenv==1.0.1 scikit-learn>=1.4.0
 ```
 
-> **Note for Windows users:** FAISS requires Visual C++ redistributables. If you encounter issues, install [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) first.
-
-### Configuration
-cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY
-```
+> **Windows Note:** If FAISS installation fails, install [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) first.
 
 ### Configuration
 
@@ -93,117 +106,128 @@ Create a `.env` file in the project root:
 GEMINI_API_KEY=your_api_key_here
 ```
 
+Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
+
 ### Run the Application
 
 ```bash
+# Start the server
 python app.py
-```
 
-Open your browser and navigate to `http://localhost:8080`
+# Open browser and navigate to:
+# http://localhost:8080
+```
 
 ---
 
 ## 📖 Usage Guide
 
-### Uploading Media
-1. Navigate to the **Upload** page
+### 1️⃣ Upload Media
+1. Go to **Upload** page
 2. Drag & drop files or click "Choose files"
-3. Click "Index Files" to process with Gemini Embedding
-4. Files are automatically embedded and added to the searchable index
+3. Click "Index Files" to process
+4. Files are embedded and added to searchable index
 
-### Searching
-1. Go to the **Search** page
-2. Choose between **Text Search** or **Image Search**
-3. For text: Enter a natural language description
-4. For image: Upload a query image
-5. View results with similarity scores
-6. Toggle "Relationship Network" to see connections between results
+### 2️⃣ Search
+1. Navigate to **Search** page
+2. Choose tab:
+   - **Text Search**: Type natural language query
+   - **Image Search**: Upload/query image
+3. View results with similarity percentages
+4. Toggle "Relationship Network" to see connections
 
-### Gallery
-- Browse all indexed media
-- Click images to open lightbox
-- Click videos/PDFs to open in new tab
-- Delete files with the delete button
+### 3️⃣ Browse Gallery
+- View all indexed media in grid layout
+- Click images → Lightbox view
+- Click videos/PDFs → Opens in new tab
+- Delete files with trash button
 
-### Network Visualization
-- Switch between clustering methods:
-  - **Best Match**: Colors by nearest neighbor
-  - **High Similarity**: Groups by >75% similarity
-  - **Embedding Space**: PCA-based clustering
-  - **Similarity Tiers**: 6-level ranking
-- Use fullscreen button for immersive view
-- Click nodes to view media details
+### 4️⃣ Explore Network
+- Switch clustering methods via dropdown
+- Click fullscreen for immersive view
+- Drag nodes to explore relationships
+- Click nodes to view media
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-Prism BB
-├── Backend (Flask)
-│   ├── File Upload & Validation
-│   ├── Gemini Embedding API Integration
-│   ├── FAISS Vector Store
-│   └── SQLite Metadata Storage
-├── Frontend
-│   ├── Vanilla JavaScript
-│   ├── 3D Force Graph (Three.js)
-│   └── Apple-Style CSS
-└── AI/ML Pipeline
-    ├── Gemini Embedding 2 (multimodal)
-    └── 3072-dimension vector space
+┌─────────────────────────────────────────────────────────────┐
+│                        USER INTERFACE                        │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
+│  │  Upload  │  │  Search  │  │  Gallery │  │ Network  │   │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│                     FLASK BACKEND                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ File Upload  │  │   Search     │  │ 3D Network   │      │
+│  │  & Validate  │  │   Queries    │  │    Data      │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│                    AI/ML PIPELINE                            │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │     Google Gemini Embedding 2 (multimodal)             │  │
+│  │     • 3072-dimension vectors                          │  │
+│  │     • Text + Image + Video + Audio + PDF support      │  │
+│  └────────────────────────────────────────────────────────┘  │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────▼────────────────────────────────────┐
+│                      DATA STORAGE                            │
+│  ┌────────────────┐  ┌────────────────┐  ┌────────────────┐ │
+│  │     FAISS      │  │    SQLite      │  │   File System  │ │
+│  │ Vector Search  │  │   Metadata     │  │   Uploads      │ │
+│  └────────────────┘  └────────────────┘  └────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ### Tech Stack
-- **Backend**: Flask, Python 3.10+
-- **Vector DB**: FAISS (Facebook AI Similarity Search)
-- **Metadata**: SQLite
-- **Frontend**: Vanilla JS, Three.js, 3d-force-graph
-- **AI Model**: Google Gemini Embedding 2 Preview
+| Component | Technology |
+|-----------|------------|
+| **Backend** | Flask (Python 3.10+) |
+| **AI Model** | Google Gemini Embedding 2 Preview |
+| **Vector DB** | FAISS (Facebook AI Similarity Search) |
+| **Metadata** | SQLite |
+| **Frontend** | Vanilla JavaScript, Three.js |
+| **Visualization** | 3d-force-graph |
+| **Styling** | Custom CSS (Apple-style) |
 
 ---
 
-## 🔧 Configuration Options
+## 🔧 Configuration
 
 ### Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `GEMINI_API_KEY` | Google Gemini API key | Required |
-| `FLASK_ENV` | Development/production mode | `development` |
-| `FLASK_PORT` | Server port | `8080` |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GEMINI_API_KEY` | ✅ Yes | Google Gemini API key |
+| `FLASK_ENV` | ❌ No | `development` or `production` |
+| `FLASK_PORT` | ❌ No | Server port (default: 8080) |
 
-### Embedding Model
+### Gemini Embedding Limits
 
-The application uses `gemini-embedding-2-preview` which supports:
-- Up to 6 images per batch request
-- 8192 text tokens
-- 128-second videos
-- 80-second audio
-- 6-page PDFs
+| Media Type | Max per Request | Total Limit |
+|------------|-----------------|-------------|
+| Images | 6 per batch | 8192 tokens |
+| Videos | 1 per request | 128 seconds |
+| Audio | 1 per request | 80 seconds |
+| PDF | 1 per request | 6 pages |
+| Text | - | 8192 tokens |
 
 ---
 
-## 🎨 Customization
+## 💻 Platform Support
 
-### Changing the Theme
-
-Edit CSS variables in `static/css/style.css`:
-
-```css
-:root {
-  --accent: #007aff;        /* Primary color */
-  --bg: #f5f5f7;            /* Background */
-  --surface: #ffffff;       /* Card backgrounds */
-  --text: #1d1d1f;          /* Primary text */
-}
-```
-
-### Adding New Media Types
-
-1. Update `ALLOWED_EXTENSIONS` in `app.py`
-2. Add MIME type mapping in `backend/embeddings.py`
-3. Add preview handlers in `static/js/app.js`
+| Platform | Status | Tested On |
+|----------|--------|-----------|
+| macOS 12+ | ✅ Fully Supported | Monterey, Ventura, Sonoma |
+| Windows 10/11 | ✅ Supported | Python 3.10+ required |
+| Ubuntu 20.04+ | ✅ Supported | WSL compatible |
 
 ---
 
@@ -212,63 +236,37 @@ Edit CSS variables in `static/css/style.css`:
 ### Common Issues
 
 **"No files could be processed"**
-- Check file formats are supported
-- Verify files aren't corrupted
-- Check console logs for specific errors
+- Check file format is in supported list
+- Verify file isn't corrupted
+- Check browser console for errors
 
 **"Batch embedding failed"**
-- Verify Gemini API key is valid
-- Check API rate limits (60 req/min on free tier)
+- Verify `GEMINI_API_KEY` is valid
+- Check rate limit (60 requests/min on free tier)
 - Large files may timeout - try smaller batches
 
-**Network visualization not loading**
-- Ensure Three.js and 3d-force-graph libraries loaded
-- Check browser console for errors
-- Try refreshing the page
-
-### Platform-Specific Issues
-
-**Windows - "faiss" module not found**
+**"FAISS module not found" (Windows)**
 ```powershell
-# Install pre-built wheel
 pip install faiss-cpu
-
-# Or use conda
+# Or use conda:
 conda install -c pytorch faiss-cpu
 ```
 
-**Windows - Path errors**
-- Use forward slashes `/` or escaped backslashes `\\` in paths
-- Ensure `uploads/` and `data/` folders have write permissions
-
-**macOS - Permission denied**
-```bash
-# Fix folder permissions
-chmod -R 755 uploads/ data/
-```
+**3D Network not loading**
+- Check internet connection (loads libraries from CDN)
+- Open browser console (F12) for errors
+- Try hard refresh (Ctrl+Shift+R)
 
 ### Performance Tips
 
-- Process images in batches (up to 6 at a time)
-- Resize large images before upload
-- Use video compression for files >10MB
-- Clear old index with "Delete" if storage grows large
+- Process images in batches (up to 6 at once)
+- Resize images >4MB before upload
+- Compress videos >10MB
+- Delete old files to keep index size manageable
 
 ---
 
-## 💻 Platform Support
-
-| Platform | Status | Notes |
-|----------|--------|-------|
-| **macOS** | ✅ Fully Supported | Tested on macOS 12+ |
-| **Windows** | ✅ Supported | Python 3.10+ required |
-| **Linux** | ✅ Supported | Ubuntu 20.04+ recommended |
-
----
-
-## 📝 API Reference
-
-### Endpoints
+## 📝 API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -276,8 +274,8 @@ chmod -R 755 uploads/ data/
 | `/api/images` | GET | List all indexed media |
 | `/api/search/text` | POST | Text-based semantic search |
 | `/api/search/image` | POST | Image-based similarity search |
-| `/api/network` | GET | Get 3D network data |
-| `/api/stats` | GET | Index statistics |
+| `/api/network` | GET | Get 3D network graph data |
+| `/api/stats` | GET | Get index statistics |
 | `/api/images/<id>` | DELETE | Remove media from index |
 
 ### Example: Text Search
@@ -285,42 +283,46 @@ chmod -R 755 uploads/ data/
 ```bash
 curl -X POST http://localhost:8080/api/search/text \
   -H "Content-Type: application/json" \
-  -d '{"query": "sunset at the beach", "top_k": 10}'
+  -d '{
+    "query": "sunset at the beach with palm trees",
+    "top_k": 10,
+    "min_score": 0.20
+  }'
 ```
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome! Please:
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) file
 
 ---
 
 ## 🙏 Acknowledgments
 
-- [Google Gemini](https://ai.google.dev/) for the multimodal embedding API
-- [FAISS](https://github.com/facebookresearch/faiss) for efficient similarity search
-- [3d-force-graph](https://github.com/vasturiano/3d-force-graph) for network visualization
-- [Three.js](https://threejs.org/) for 3D graphics
+- [Google Gemini](https://ai.google.dev/) - Multimodal embedding API
+- [FAISS](https://github.com/facebookresearch/faiss) - Efficient similarity search
+- [3d-force-graph](https://github.com/vasturiano/3d-force-graph) - Network visualization
+- [Three.js](https://threejs.org/) - 3D graphics library
 
 ---
 
-## 📧 Contact
+<p align="center">
+  <b>Prism BB</b> — See your media in a new light 🔮
+</p>
 
-For questions or support, please open an issue on GitHub.
-
----
-
-**Prism BB** — *See your media in a new light* 🔮
+<p align="center">
+  Made with ❤️ using Gemini Embedding 2
+</p>
