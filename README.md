@@ -45,19 +45,42 @@ Prism BB is a multimodal AI-powered search engine that understands images, video
 
 ### Installation
 
+#### macOS / Linux
+
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd prism-bb
+git clone https://github.com/Babajan-B/Prism-BB.git
+cd Prism-BB
 
 # Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+```
 
-# Set up environment variables
+#### Windows
+
+```powershell
+# Clone the repository
+git clone https://github.com/Babajan-B/Prism-BB.git
+cd Prism-BB
+
+# Create virtual environment
+python -m venv venv
+venv\Scripts\activate
+
+# Install FAISS (Windows-specific)
+pip install faiss-cpu
+
+# Install other dependencies
+pip install flask google-genai Pillow python-dotenv numpy scikit-learn
+```
+
+> **Note for Windows users:** FAISS requires Visual C++ redistributables. If you encounter issues, install [Microsoft Visual C++ Redistributable](https://aka.ms/vs/17/release/vc_redist.x64.exe) first.
+
+### Configuration
 cp .env.example .env
 # Edit .env and add your GEMINI_API_KEY
 ```
@@ -203,12 +226,43 @@ Edit CSS variables in `static/css/style.css`:
 - Check browser console for errors
 - Try refreshing the page
 
+### Platform-Specific Issues
+
+**Windows - "faiss" module not found**
+```powershell
+# Install pre-built wheel
+pip install faiss-cpu
+
+# Or use conda
+conda install -c pytorch faiss-cpu
+```
+
+**Windows - Path errors**
+- Use forward slashes `/` or escaped backslashes `\\` in paths
+- Ensure `uploads/` and `data/` folders have write permissions
+
+**macOS - Permission denied**
+```bash
+# Fix folder permissions
+chmod -R 755 uploads/ data/
+```
+
 ### Performance Tips
 
 - Process images in batches (up to 6 at a time)
 - Resize large images before upload
 - Use video compression for files >10MB
 - Clear old index with "Delete" if storage grows large
+
+---
+
+## 💻 Platform Support
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| **macOS** | ✅ Fully Supported | Tested on macOS 12+ |
+| **Windows** | ✅ Supported | Python 3.10+ required |
+| **Linux** | ✅ Supported | Ubuntu 20.04+ recommended |
 
 ---
 
