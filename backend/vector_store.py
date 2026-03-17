@@ -55,27 +55,31 @@ def search_similar(
     ids: list[str],
     query_embedding: list[float],
     top_k: int = 8,
-    min_score: float = 0.15,
+    min_score: float = 0.10,
 ) -> list[dict]:
     """
     Return the top-k most similar image IDs with their cosine-similarity scores.
     Results with a score below min_score (0-1 scale) are filtered out.
-    Lowered default min_score to 0.15 to capture more potential matches.
     """
     if index.ntotal == 0:
+        print(f"[FAISS] Index is empty!")
         return []
 
     vec = np.array([query_embedding], dtype=np.float32)
     faiss.normalize_L2(vec)
 
     # Search for more candidates initially
-    search_k = min(top_k * 2, index.ntotal)
+    search_k = min(top_k * 3, index.ntotal)  # Search more to account for filtering
     distances, indices = index.search(vec, search_k)
+    
+    print(f"[FAISS] Searched {search_k}, raw distances: {distances[0][:5]}")
 
     results = []
     for dist, idx in zip(distances[0], indices[0]):
         if idx != -1 and float(dist) >= min_score:
             results.append({"image_id": ids[idx], "score": float(dist)})
+    
+    print(f"[FAISS] After filtering (min_score={min_score}): {len(results)} results")
     
     # Return only top_k after filtering
     return results[:top_k]

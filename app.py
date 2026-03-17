@@ -328,13 +328,20 @@ def search_text():
         if q_emb is None:
             return jsonify({"error": "Failed to generate query embedding. Check API key."}), 500
         
+        print(f"[SEARCH] Query: '{query}', Index size: {_faiss_index.ntotal}, Embeddings: {len(_faiss_ids)}")
+        
         # Search with lower threshold to get more candidates
         hits = search_similar(_faiss_index, _faiss_ids, q_emb, top_k=top_k, min_score=min_score)
+        print(f"[SEARCH] Found {len(hits)} hits above threshold {min_score}")
         
         # Sort by score descending
         hits = sorted(hits, key=lambda x: x["score"], reverse=True)
         
-        return jsonify({"results": _enrich_hits(hits)})
+        return jsonify({
+            "results": _enrich_hits(hits),
+            "indexed_count": _faiss_index.ntotal,
+            "query": query
+        })
     except Exception as e:
         import traceback
         print(f"[ERROR] search_text: {e}")
@@ -706,9 +713,16 @@ def group_by_caption_themes(captions):
 # ── Helper ─────────────────────────────────────────────────────────────────────
 def _enrich_hits(hits: list[dict]) -> list[dict]:
     enriched = []
+    skipped = 0
     for h in hits:
         meta = get_image_by_id(h["image_id"])
-        if not meta or not os.path.exists(meta["file_path"]):
+        if not meta:
+            skipped += 1
+            print(f"[ENRICH] Skip {h['image_id'][:8]}: no metadata")
+            continue
+        if not os.path.exists(meta["file_path"]):
+            skipped += 1
+            print(f"[ENRICH] Skip {h['image_id'][:8]}: file not found {meta['file_path']}")
             continue
         enriched.append({
             "image_id": h["image_id"],
@@ -721,6 +735,8 @@ def _enrich_hits(hits: list[dict]) -> list[dict]:
             "upload_ts": meta["upload_ts"],
             "media_type": meta.get("media_type", "image"),
         })
+    if skipped > 0:
+        print(f"[ENRICH] Enriched {len(enriched)}, skipped {skipped}")
     return enriched
 
 

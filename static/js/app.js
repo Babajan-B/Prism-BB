@@ -273,6 +273,11 @@ async function doTextSearch() {
       return;
     }
     
+    console.log('[Search] Results:', data.results?.length || 0, 'items');
+    if (data.results?.length === 0) {
+      console.log('[Search] No results. Index total:', data.indexed_count || 'unknown');
+    }
+    
     // Sort by score descending and show top results
     const sortedResults = (data.results || [])
       .sort((a, b) => b.score - a.score)
