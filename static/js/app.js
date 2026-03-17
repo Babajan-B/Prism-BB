@@ -242,13 +242,36 @@ async function doTextSearch() {
   document.getElementById('search-network-container').classList.add('hidden');
 
   try {
-    const res  = await fetch('/api/search/text', {
+    const res = await fetch('/api/search/text', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query, top_k: 20, min_score: 0.10 }),
     });
-    const data = await res.json();
+    
+    // Check if response is OK
+    if (!res.ok) {
+      const text = await res.text();
+      console.error('[Search Error] Status:', res.status, 'Response:', text);
+      throw new Error(`Server error: ${res.status}`);
+    }
+    
+    // Try to parse JSON
+    let data;
+    try {
+      data = await res.json();
+    } catch (parseErr) {
+      const text = await res.text();
+      console.error('[Search Error] JSON parse failed. Response:', text);
+      throw new Error('Invalid response from server');
+    }
+    
     loader.remove();
+    
+    // Check for API errors
+    if (data.error) {
+      showToast('Error: ' + data.error, 'error');
+      return;
+    }
     
     // Sort by score descending and show top results
     const sortedResults = (data.results || [])
@@ -264,6 +287,7 @@ async function doTextSearch() {
     }
   } catch(e) {
     loader.remove();
+    console.error('[doTextSearch] Error:', e);
     showToast('Search failed: ' + e.message, 'error');
   }
 }

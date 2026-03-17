@@ -2,14 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#f2f2f7" />
   <title>Prism BB — Semantic Media Search</title>
   <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 <body>
 
-  <!-- ── Sidebar ────────────────────────────────── -->
-  <aside class="sidebar">
+  <!-- ── Mobile Menu Toggle ──────────────────────── -->
+  <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  </button>
+
+  <!-- ── Mobile Sidebar Overlay ──────────────────── -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- ── Sidebar ────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
     <div class="logo">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -53,18 +66,18 @@
 
     <div class="stats-box">
       <div class="stat">
-        <span class="stat-val" id="stat-images">—</span>
+        <span class="stat-val" id="stat-images">&mdash;</span>
         <span class="stat-label">Files</span>
       </div>
       <div class="stat">
-        <span class="stat-val" id="stat-vectors">—</span>
+        <span class="stat-val" id="stat-vectors">&mdash;</span>
         <span class="stat-label">Indexed</span>
       </div>
     </div>
 
     <div class="model-badge">
       <span class="badge-dot"></span>
-      gemini-embedding-2-preview
+      gemini-embedding-2
     </div>
   </aside>
 
@@ -85,13 +98,13 @@
         </svg>
         <p>Drag & drop files here</p>
         <span>or</span>
-        <label class="btn-primary" for="file-input">Choose files</label>
+        <label class="btn-primary" for="file-input">Choose Files</label>
         <input type="file" id="file-input" multiple accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.ogg,.m4a,.flac,.aac,.pdf,.txt,.md,.json,.csv" hidden />
         <div class="hint">
-          <strong>Images:</strong> JPG, PNG, WEBP, GIF, BMP (max 6 per batch)<br>
-          <strong>Videos:</strong> MP4, MOV, AVI, MKV (≤128 seconds)<br>
-          <strong>Audio:</strong> MP3, WAV, OGG, M4A, FLAC, AAC (≤80 seconds)<br>
-          <strong>Documents:</strong> PDF (≤6 pages), TXT, MD, JSON, CSV
+          <strong>Images:</strong> JPG, PNG, WEBP, GIF, BMP &nbsp;&middot;&nbsp;
+          <strong>Videos:</strong> MP4, MOV, AVI, MKV<br>
+          <strong>Audio:</strong> MP3, WAV, OGG, M4A, FLAC &nbsp;&middot;&nbsp;
+          <strong>Docs:</strong> PDF, TXT, MD, JSON, CSV
         </div>
       </div>
 
@@ -107,7 +120,7 @@
     <!-- Search page -->
     <section class="page" id="page-search">
       <div class="page-header">
-        <h1>Search Images</h1>
+        <h1>Search</h1>
       </div>
 
       <div class="search-tabs">
@@ -121,7 +134,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <input type="text" id="text-query" placeholder="e.g. red flower in a garden, microscope slide, sunset…" />
+          <input type="text" id="text-query" placeholder="Describe what you're looking for..." />
           <button class="btn-primary" id="text-search-btn">Search</button>
         </div>
         <div id="text-results" class="results-grid"></div>
@@ -141,26 +154,26 @@
           </div>
           <input type="file" id="img-query-input" accept=".jpg,.jpeg,.png,.webp" hidden />
         </div>
-        <button class="btn-primary btn-lg" id="img-search-btn" disabled>Find Similar Images</button>
+        <button class="btn-primary btn-lg" id="img-search-btn" disabled>Find Similar</button>
         <div id="img-results" class="results-grid"></div>
       </div>
-      
+
       <!-- Search Network Visualization -->
       <div id="search-network-container" class="search-network-container hidden">
         <div class="search-net-header">
           <div>
-            <h3>🔗 Relationship Network</h3>
-            <p class="search-net-desc">Visualize how search results connect to each other based on similarity</p>
+            <h3>Relationship Network</h3>
+            <p class="search-net-desc">How search results connect based on similarity</p>
           </div>
-          <button class="btn-icon" id="search-net-fullscreen" title="Fullscreen">⛶</button>
+          <button class="btn-icon" id="search-net-fullscreen" title="Fullscreen">&#x26F6;</button>
         </div>
         <div id="search-network-graph" class="search-network-graph"></div>
         <div class="search-net-legend">
-          <div class="legend-item"><span class="dot" style="background:#f05454"></span> Query (Center)</div>
+          <div class="legend-item"><span class="dot" style="background:#f05454"></span> Query</div>
           <div class="legend-item"><span class="dot" style="background:#f5a623"></span> Top Result</div>
-          <div class="legend-item"><span class="dot" style="background:#4caf7d"></span> High Match (>70%)</div>
-          <div class="legend-item"><span class="dot" style="background:#5b6ef5"></span> Med Match (50-70%)</div>
-          <div class="legend-item"><span class="dot" style="background:#9c27b0"></span> Low Match (<50%)</div>
+          <div class="legend-item"><span class="dot" style="background:#4caf7d"></span> High (&gt;70%)</div>
+          <div class="legend-item"><span class="dot" style="background:#5b6ef5"></span> Medium</div>
+          <div class="legend-item"><span class="dot" style="background:#9c27b0"></span> Low</div>
         </div>
       </div>
     </section>
@@ -185,24 +198,24 @@
     <section class="page" id="page-network">
       <div class="page-header">
         <h1>Semantic Network</h1>
-        <p>Visualize image relationships based on embeddings. <span id="network-stats"></span></p>
+        <p>Explore image relationships via embeddings. <span id="network-stats"></span></p>
         <div class="cluster-toggle">
           <span>Group by:</span>
           <select id="cluster-method">
-            <option value="neighbor">🔗 Best Match (Nearest Neighbor)</option>
-            <option value="high_sim">⭐ High Similarity (>75%)</option>
-            <option value="embedding_pca">🧠 Embedding Space (PCA)</option>
-            <option value="similarity_tiers">📊 Similarity Tiers (6 levels)</option>
-            <option value="dominant_theme">📝 Caption Theme (if available)</option>
-            <option value="none">⚪ No Grouping</option>
+            <option value="neighbor">Best Match (Nearest Neighbor)</option>
+            <option value="high_sim">High Similarity (&gt;75%)</option>
+            <option value="embedding_pca">Embedding Space (PCA)</option>
+            <option value="similarity_tiers">Similarity Tiers (6 levels)</option>
+            <option value="dominant_theme">Caption Theme</option>
+            <option value="none">No Grouping</option>
           </select>
         </div>
         <div id="grouping-description" class="grouping-desc"></div>
       </div>
       <div id="network-container" class="network-container">
         <div class="network-toolbar">
-          <button class="btn-icon" id="net-fullscreen" title="Fullscreen">⛶</button>
-          <button class="btn-icon" id="net-refresh" title="Refresh">↻</button>
+          <button class="btn-icon" id="net-fullscreen" title="Fullscreen">&#x26F6;</button>
+          <button class="btn-icon" id="net-refresh" title="Refresh">&#8635;</button>
         </div>
         <div id="network-graph"></div>
       </div>
@@ -221,7 +234,7 @@
   <div class="lightbox hidden" id="lightbox">
     <div class="lightbox-backdrop" id="lb-backdrop"></div>
     <div class="lightbox-card">
-      <button class="lb-close" id="lb-close">✕</button>
+      <button class="lb-close" id="lb-close">&#x2715;</button>
       <img id="lb-img" src="" alt="" />
       <div class="lb-meta">
         <h3 id="lb-name"></h3>
@@ -236,7 +249,7 @@
 
   <!-- ── Toast ──────────────────────────────────── -->
   <div class="toast hidden" id="toast"></div>
-  
+
   <!-- ── Node Hover Preview ────────────────────── -->
   <div class="node-hover-preview" id="node-hover-preview">
     <img src="" alt="preview" />
@@ -245,8 +258,42 @@
   <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
   <script>
     window.libsLoaded = { three: typeof THREE !== 'undefined', forceGraph3d: false };
+
+    // Mobile menu toggle with overlay
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+
+    function openSidebar() {
+      sidebar.classList.add('open');
+      overlay.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove('open');
+      overlay.classList.remove('visible');
+      document.body.style.overflow = '';
+    }
+
+    mobileBtn?.addEventListener('click', () => {
+      if (sidebar.classList.contains('open')) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+
+    overlay?.addEventListener('click', closeSidebar);
+
+    // Close sidebar when nav button clicked on mobile
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) closeSidebar();
+      });
+    });
   </script>
-  <script src="https://unpkg.com/3d-force-graph@1.73.0/dist/3d-force-graph.min.js" 
+  <script src="https://unpkg.com/3d-force-graph@1.73.0/dist/3d-force-graph.min.js"
           onload="window.libsLoaded.forceGraph3d = true;"
           onerror="console.error('3D lib failed')"></script>
   <script src="/static/js/app.js"></script>

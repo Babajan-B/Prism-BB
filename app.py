@@ -310,27 +310,36 @@ def get_images():
     return jsonify({"images": images, "total": len(images)})
 
 
-# ── API: Text search ───────────────────────────────────────────────────────────
+# ── API: Text search ─────────────────────────────────────────────────────────--
 @app.route("/api/search/text", methods=["POST"])
 def search_text():
-    data = request.get_json(force=True)
-    query = (data.get("query") or "").strip()
-    top_k = int(data.get("top_k", 12))
-    min_score = float(data.get("min_score", 0.10))
+    try:
+        data = request.get_json(force=True)
+        query = (data.get("query") or "").strip()
+        top_k = int(data.get("top_k", 12))
+        min_score = float(data.get("min_score", 0.10))
 
-    if not query:
-        return jsonify({"error": "Query is required"}), 400
-    if _faiss_index.ntotal == 0:
-        return jsonify({"results": [], "message": "No images indexed yet"})
+        if not query:
+            return jsonify({"error": "Query is required"}), 400
+        if _faiss_index.ntotal == 0:
+            return jsonify({"results": [], "message": "No images indexed yet"})
 
-    q_emb = generate_query_embedding(query)
-    # Search with lower threshold to get more candidates
-    hits = search_similar(_faiss_index, _faiss_ids, q_emb, top_k=top_k, min_score=min_score)
-    
-    # Sort by score descending
-    hits = sorted(hits, key=lambda x: x["score"], reverse=True)
-    
-    return jsonify({"results": _enrich_hits(hits)})
+        q_emb = generate_query_embedding(query)
+        if q_emb is None:
+            return jsonify({"error": "Failed to generate query embedding. Check API key."}), 500
+        
+        # Search with lower threshold to get more candidates
+        hits = search_similar(_faiss_index, _faiss_ids, q_emb, top_k=top_k, min_score=min_score)
+        
+        # Sort by score descending
+        hits = sorted(hits, key=lambda x: x["score"], reverse=True)
+        
+        return jsonify({"results": _enrich_hits(hits)})
+    except Exception as e:
+        import traceback
+        print(f"[ERROR] search_text: {e}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 # ── API: Image-to-image search ─────────────────────────────────────────────────
@@ -714,6 +723,31 @@ def _enrich_hits(hits: list[dict]) -> list[dict]:
         })
     return enriched
 
+
+# ── Global Error Handlers ─────────────────────────────────────────────────────
+@app.errorhandler(404)
+def not_found(error):
+    if request.path.startswith('/api/'):
+        return jsonify({"error": "Endpoint not found"}), 404
+    return render_template("index.html")
+
+@app.errorhandler(500)
+def server_error(error):
+    import traceback
+    print(f"[ERROR 500]: {error}")
+    traceback.print_exc()
+    if request.path.startswith('/api/'):
+        return jsonify({"error": "Internal server error"}), 500
+    return "Internal Server Error", 500
+
+@app.errorhandler(Exception)
+def handle_exception(error):
+    import traceback
+    print(f"[ERROR]: {error}")
+    traceback.print_exc()
+    if request.path.startswith('/api/'):
+        return jsonify({"error": str(error)}), 500
+    return "Error occurred", 500
 
 # ── Run ────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
